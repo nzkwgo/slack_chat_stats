@@ -1,5 +1,6 @@
 const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 const getWorkspaceToken = require('../../helpers/get_workspace_token.js');
+const getAppUserId = require('../../helpers/get_workspace_user_id.js');
 const message = require('../../utils/message.js');
 /**
 * Slack Slash Command Handler:
@@ -28,33 +29,35 @@ module.exports = (context, callback) => {
     if (err) {
       callback(err);
     }
-    lib[`${context.service.identifier}.commands.${name}`](
-      {
-        user: command.user_id,
-        channel: command.channel_id,
-        text: command.text,
-        command: command,
-        workspaceToken: workspaceToken
-      },
-      (err, result) => {
-        if (err) {
-          message(
-            workspaceToken,
-            command.channel_id,
-            {
-              text: err.message
-            },
-            callback
-          );
-        } else {
-          message(
-            workspaceToken,
-            command.channel_id,
-            result,
-            callback
-          );
+    getWorkspaceUserId(command.team_id, (err, workspaceUserId) => {
+      lib[`${context.service.identifier}.commands.${name}`](
+        {
+          user: command.user_id,
+          channel: command.channel_id,
+          text: command.text,
+          command: command,
+          workspaceToken: workspaceToken
+        },
+        (err, result) => {
+          if (err) {
+            message(
+              workspaceToken,
+              command.channel_id,
+              {
+                text: err.message
+              },
+              callback
+            );
+          } else {
+            message(
+              workspaceToken,
+              command.channel_id,
+              result,
+              callback
+            );
+          }
         }
-      }
-    );
+      );
+    })
   });
 };

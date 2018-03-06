@@ -8,24 +8,19 @@ const request = require('request');
  */
 module.exports = (token, channel, callback) => {
 
-  request.get(`https://slack.com/api/channels.history?token=${token}&channel=${channel}&count=1000`, (error, response, body) => {
+  request(`https://slack.com/api/channels.history?token=${token}&channel=${channel}&count=1000`, (error, response, body) => {
 
     if (error) {
       return callback(error);
     }
 
-    let history;
-    try {
-      history = JSON.parse(body);
-    } catch (e) {
-      history = {}
-    }
+    const history = JSON.parse(body);
 
-    if (!body.ok) {
+    if (!history.ok) {
       return callback(new Error(history.error));
     }
 
-    callback(null, history);
+    callback(null, body);
 
   });
 

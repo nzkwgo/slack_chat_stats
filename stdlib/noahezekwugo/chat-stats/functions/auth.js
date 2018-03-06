@@ -96,7 +96,7 @@ module.exports = (code = null, error = '', callback) => {
         team = {
           id: auth.team_id,
           auth: auth,
-          createdBy: auth.installer_user_id,
+          createdBy: auth.app_user_id,
           name: auth.team_name,
           access_token: auth.access_token
         }
